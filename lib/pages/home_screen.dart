@@ -94,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   AppBar MyAppBar() {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: GestureDetector(
         onTap: () {},
         child: Text(

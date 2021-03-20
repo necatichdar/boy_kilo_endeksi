@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class PanelScreen extends StatefulWidget {
   @override
@@ -10,37 +9,13 @@ class PanelScreen extends StatefulWidget {
 }
 
 class _PanelScreenState extends State<PanelScreen> {
-  String imgUrl =
-      "https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
-
-  String runningMan =
-      "https://g7.pngresmi.com/preview/419/16/61/knee-pain-arthritis-pain-joint-pain-others.jpg";
+  String imgUrl = "assets/images/background.jpeg";
 
   String man1 = "assets/images/man1.png";
   String man = "assets/images/man.png";
   bool ture = false;
-  Timer timer;
-
   int margin = 0;
-
-  Stopwatch _stopwatch;
-
-  @override
-  void initState() {
-    super.initState();
-    _stopwatch = Stopwatch();
-  }
-
-  void handleStartStop() {
-    if (_stopwatch.isRunning) {
-      _stopwatch.stop();
-      print("stop ici");
-    } else {
-      _stopwatch.start();
-      print("start ici");
-    }
-    setState(() {}); // re-render the page
-  }
+  double kaydirmaPadding = 0.0;
 
   voidYardir() {
     voidBoolean();
@@ -51,6 +26,7 @@ class _PanelScreenState extends State<PanelScreen> {
     } else {
       setState(() {
         margin += 5;
+        kaydirmaPadding += 2.3;
       });
     }
   }
@@ -81,7 +57,7 @@ class _PanelScreenState extends State<PanelScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage(
+              image: AssetImage(
                 imgUrl,
               ),
               fit: BoxFit.cover),
@@ -90,7 +66,7 @@ class _PanelScreenState extends State<PanelScreen> {
           children: [
             topBar(size),
             buildCircular(size),
-            bodyButton(),
+            bodyButton(size),
             Row(
               children: [
                 Container(
@@ -106,14 +82,50 @@ class _PanelScreenState extends State<PanelScreen> {
     );
   }
 
-  Padding bodyButton() {
+  Padding bodyButton(Size size) {
     return Padding(
       padding: const EdgeInsets.only(right: 12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              showBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return Container(
+                    height: size.height * .2,
+                    width: size.width,
+                    color: Colors.transparent,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(.5),
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(50),
+                              topLeft: Radius.circular(50)
+                          )
+                      ),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            child: Container(
+                              width: size.width,
+                              padding: EdgeInsets.all(20),
+                              alignment: Alignment.centerRight,
+                              child: Icon(
+                                Icons.arrow_downward_outlined,
+                              ),
+                            ),
+                            onTap: () => Navigator.pop(context),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
             child: FaIcon(FontAwesomeIcons.bolt),
           ),
         ],
@@ -124,7 +136,7 @@ class _PanelScreenState extends State<PanelScreen> {
   FloatingActionButton MyFloatingActionButton() {
     return FloatingActionButton.extended(
       onPressed: () {
-        handleStartStop();
+        voidYardir();
         // voidBoolean();
       },
       label: Text("Yeni Ekle"),
@@ -145,25 +157,16 @@ class _PanelScreenState extends State<PanelScreen> {
                 "Baslangic",
                 style: GoogleFonts.daysOne(fontSize: 16),
               ),
-              buildContainer(size, 0.05, 0.2),
+              buildContainer("", "24", false, size, 0.05, 0.2),
             ],
           ),
-          Container(
-            height: 200,
-            width: 200,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border:
-                  Border.all(color: Colors.black.withOpacity(.5), width: 15),
-            ),
-            child: Center(
-              child: Text(
-                "67.0 KG",
-                style: GoogleFonts.bebasNeue(
-                  fontSize: 48,
-                ),
-              ),
-            ),
+          CircularPercentIndicator(
+            radius: 180.0,
+            startAngle: 0,
+            lineWidth: 20.0,
+            percent: 0.8,
+            center: new Text("80%"),
+            progressColor: Colors.deepPurpleAccent,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -172,7 +175,7 @@ class _PanelScreenState extends State<PanelScreen> {
                 "Hedef",
                 style: GoogleFonts.daysOne(fontSize: 16),
               ),
-              buildContainer(size, 0.05, 0.2),
+              buildContainer("", "24", false, size, 0.05, 0.2),
             ],
           ),
         ],
@@ -187,36 +190,58 @@ class _PanelScreenState extends State<PanelScreen> {
       children: [
         Column(
           children: [
-            buildContainer(size, 0.05, 0.33),
-            buildContainer(size, 0.05, 0.33),
+            buildContainer("VKI", "28.7", true, size, 0.05, 0.33),
+            buildContainer("Kilolu", "Erkek", false, size, 0.05, 0.33),
           ],
         ),
         Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildContainer(size, 0.065, 0.33),
+            buildContainer("Verilen", "0.0", true, size, 0.065, 0.33),
             Container(
-              height: 29,
-              width: size.width * 0.33,
-              color: Colors.red,
+              height: size.height * 0.040,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.alarm_add_outlined,
+                  ),
+                  Container(
+                    width: 100,
+                    height: size.height * 0.018,
+                    color: Colors.blue,
+                    padding: EdgeInsets.only(
+                      left: kaydirmaPadding,
+                    ),
+                    child: Container(
+                      height: size.height * 0.018,
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
+              ),
             )
           ],
         ),
         Column(
           children: [
-            buildContainer(size, 0.05, 0.33),
-            buildContainer(size, 0.05, 0.33),
+            buildContainer("Kalan", "12.9", true, size, 0.05, 0.33),
+            buildContainer(
+                "Baslangic : 21.03", "Bitis : 29.03", false, size, 0.05, 0.33),
           ],
         ),
       ],
     );
   }
 
-  Container buildContainer(Size size, double yukseklik, double genislik) {
+  Container buildContainer(String text, String deger, bool yaziVarMi, Size size,
+      double yukseklik, double genislik) {
     return Container(
       height: size.height * yukseklik,
       width: size.width * genislik,
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(.5),
+        color: Colors.blue.withOpacity(.25),
         border: Border.all(
           color: Colors.grey,
         ),
@@ -226,9 +251,11 @@ class _PanelScreenState extends State<PanelScreen> {
         children: [
           Expanded(
             child: Text(
-              "VKI",
-              style: GoogleFonts.sancreek(
+              text,
+              style: GoogleFonts.reemKufi(
                 fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.yellow.shade900,
               ),
             ),
           ),
@@ -236,9 +263,11 @@ class _PanelScreenState extends State<PanelScreen> {
             height: 1,
           ),
           Text(
-            "28.7",
-            style:
-                GoogleFonts.reemKufi(fontSize: 14, fontWeight: FontWeight.bold),
+            yaziVarMi ? "$deger kg" : "$deger",
+            style: GoogleFonts.reemKufi(
+              fontSize: 14,
+              color: Colors.yellow.shade700,
+            ),
           ),
         ],
       ),
